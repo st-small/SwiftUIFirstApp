@@ -22,15 +22,24 @@ public struct ContentView: View {
                             .font(.headline)
                         Text(novel.name)
                     }
-                }
+                }.onDelete(perform: removeNovels)
             }.navigationBarTitle("Романы")
-                .navigationBarItems(trailing: Button("Добавить") {
+                .navigationBarItems(leading: EditButton(), trailing: Button("Добавить") {
                     self.showingAddNovel.toggle()
             })
         }
         .sheet(isPresented: $showingAddNovel) {
             AddView(isPresented: self.$showingAddNovel).environment(\.managedObjectContext, self.moc)
         }
+    }
+    
+    public func removeNovels(at offsets: IndexSet) {
+        for index in offsets {
+            let novel = novels[index]
+            moc.delete(novel)
+        }
+        
+        try? moc.save()
     }
 }
 
