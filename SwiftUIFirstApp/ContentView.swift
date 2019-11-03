@@ -14,6 +14,9 @@ public struct ContentView: View {
     @Environment(\.managedObjectContext) var moc
     
     public var body: some View {
+        // Uncomment this block to use default UI
+        /*
+        
         NavigationView {
             List {
                 ForEach(novels, id: \.name) { novel in
@@ -28,6 +31,26 @@ public struct ContentView: View {
                     self.showingAddNovel.toggle()
             })
         }
+ */
+        // Use custom UI
+        ZStack(alignment: .top) {
+            LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(novels, id: \.name) { novel in
+                        NovelCard(novel: novel)
+                    }
+                }.padding()
+            }
+            
+            Button("Добавить роман") {
+                self.showingAddNovel.toggle()
+            }
+            .foregroundColor(.white)
+            .offset(y: 50)
+        }
+        .edgesIgnoringSafeArea(.all)
         .sheet(isPresented: $showingAddNovel) {
             AddView(isPresented: self.$showingAddNovel).environment(\.managedObjectContext, self.moc)
         }
