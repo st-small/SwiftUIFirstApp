@@ -8,18 +8,10 @@
 
 import SwiftUI
 
-public struct Novel {
-    public var name: String
-    public var author: String
-    public var rating: String
-}
-
 public struct ContentView: View {
-    
-    public var novels = [
-        Novel(name: "Войн и мир", author: "Лев Толстой", rating: "B"),
-        Novel(name: "Мастер и Маргарита", author: "Михаил Булгаков", rating: "A")
-    ]
+    @FetchRequest(entity: Novel.entity(), sortDescriptors: []) var novels: FetchedResults<Novel>
+    @State var showingAddNovel = false
+    @Environment(\.managedObjectContext) var moc
     
     public var body: some View {
         NavigationView {
@@ -32,6 +24,12 @@ public struct ContentView: View {
                     }
                 }
             }.navigationBarTitle("Романы")
+                .navigationBarItems(trailing: Button("Добавить") {
+                    self.showingAddNovel.toggle()
+            })
+        }
+        .sheet(isPresented: $showingAddNovel) {
+            AddView(isPresented: self.$showingAddNovel).environment(\.managedObjectContext, self.moc)
         }
     }
 }
